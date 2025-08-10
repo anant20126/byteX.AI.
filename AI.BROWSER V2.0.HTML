@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AI.BROWSER V2.0</title>
+  <style>
+    :root{
+      --bg:#071225; /* deep navy */
+      --card:#0b2540;
+      --glow:#00e0ff;
+      --muted:#9fb6c9;
+      --accent:#4be1ff;
+      --glass: rgba(255,255,255,0.04);
+      font-family: Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;background:linear-gradient(180deg,#051025 0%, #071225 60%);color:#eaf6ff}
+    .container{max-width:1100px;margin:32px auto;padding:24px}
+
+    /* Top bar */
+    .topbar{display:flex;align-items:center;gap:16px;justify-content:space-between;background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);padding:14px;border-radius:14px;box-shadow:0 6px 30px rgba(3,10,20,0.6);border:1px solid rgba(75,225,255,0.06)}
+    .left{display:flex;align-items:center;gap:14px}
+
+    /* ByteX logo (inline SVG styled) */
+    .logo{display:flex;align-items:center;gap:12px}
+    .logo svg{width:64px;height:64px;filter:drop-shadow(0 6px 18px rgba(75,225,255,0.08));}
+    .brand{font-weight:700;font-size:20px;letter-spacing:1px}
+    .sub{font-size:12px;color:var(--muted);margin-top:2px}
+
+    /* Search bars */
+    .search-bars{display:flex;gap:10px;align-items:center}
+    .search{background:var(--glass);padding:8px;border-radius:10px;display:flex;align-items:center;gap:8px;border:1px solid rgba(75,225,255,0.06)}
+    .search input{background:transparent;border:none;outline:none;color:inherit;font-size:14px;padding:6px;width:280px}
+    .btn{background:linear-gradient(90deg,var(--accent),#00bcd4);border:none;padding:8px 12px;border-radius:8px;color:#05202b;font-weight:700;cursor:pointer}
+    .small-btn{padding:6px 8px;font-size:13px}
+
+    /* date/time */
+    .meta{display:flex;gap:12px;align-items:center;color:var(--muted);font-size:13px}
+    .pill{background:rgba(255,255,255,0.02);padding:6px 8px;border-radius:8px;border:1px solid rgba(255,255,255,0.02)}
+
+    /* App grid */
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:16px;margin-top:20px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:18px;border-radius:14px;text-align:center;border:1px solid rgba(75,225,255,0.04);cursor:pointer;transition:transform .18s ease, box-shadow .18s ease}
+    .card:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(3,10,20,0.6),0 0 20px rgba(75,225,255,0.06) inset}
+    .ic{width:64px;height:64px;margin:0 auto 10px;display:flex;align-items:center;justify-content:center}
+    .apptitle{font-weight:700;margin-top:6px}
+    .aptsub{font-size:12px;color:var(--muted)}
+
+    footer{margin-top:22px;color:var(--muted);font-size:13px;text-align:center}
+
+    /* Responsive */
+    @media (max-width:720px){
+      .search input{width:140px}
+      .logo svg{width:48px;height:48px}
+      .brand{font-size:16px}
+    }
+
+    /* Futuristic neon lines */
+    .neon{box-shadow:0 0 20px rgba(75,225,255,0.06)}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <div class="left">
+        <div class="logo">
+          <!-- Inline futuristic AI chipset logo -->
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+              <linearGradient id="g1" x1="0" x2="1">
+                <stop offset="0" stop-color="#00e0ff"/>
+                <stop offset="1" stop-color="#4be1ff"/>
+              </linearGradient>
+            </defs>
+            <rect x="8" y="8" rx="12" ry="12" width="84" height="84" fill="#041827" stroke="url(#g1)" stroke-width="2"/>
+            <rect x="22" y="22" width="56" height="56" rx="8" fill="none" stroke="url(#g1)" stroke-width="2"/>
+            <!-- tiny pins -->
+            <g stroke="url(#g1)" stroke-width="2" stroke-linecap="round">
+              <line x1="50" y1="6" x2="50" y2="16"/>
+              <line x1="50" y1="84" x2="50" y2="94"/>
+              <line x1="6" y1="50" x2="16" y2="50"/>
+              <line x1="84" y1="50" x2="94" y2="50"/>
+            </g>
+            <!-- center 'AI' -->
+            <text x="50" y="60" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="28" fill="url(#g1)">AI</text>
+          </svg>
+          <div>
+            <div class="brand">AI.BROWSER V2.0</div>
+            <div class="sub">BY BYTECODER &amp; INTELLIGENCE</div>
+          </div>
+        </div>
+
+        <div style="width:12px"></div>
+
+        <div class="search-bars">
+          <form class="search" id="geminiSearch" onsubmit="return runGeminiSearch(event)">
+            <input id="geminiQ" placeholder="Google Gemini Search — type here..." autocomplete="off">
+            <button class="btn small-btn" type="submit">Search Gemini</button>
+          </form>
+
+          <form class="search" id="chatgptSearch" onsubmit="return runChatGPTSearch(event)">
+            <input id="chatgptQ" placeholder="ChatGPT Search — quick web query..." autocomplete="off">
+            <button class="btn small-btn" type="submit">Search ChatGPT</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="meta">
+        <div class="pill" id="date">--</div>
+        <div class="pill" id="time">--</div>
+        <div class="pill">Online</div>
+      </div>
+    </div>
+
+    <div class="grid" style="margin-top:18px">
+      <!-- Row of apps -->
+
+      <div class="card" onclick="openLink('https://chat.openai.com')">
+        <div class="ic"><!-- ChatGPT-like swirl (placeholder) -->
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="24" cy="24" r="20" stroke="#4be1ff" stroke-width="2" fill="rgba(75,225,255,0.03)"/>
+            <path d="M16 30C20 34 28 34 32 30" stroke="#00d4ff" stroke-width="2" stroke-linecap="round"/>
+            <path d="M20 20C22 18 26 18 28 20" stroke="#00d4ff" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="apptitle">ChatGPT</div>
+        <div class="aptsub">AI chat</div>
+      </div>
+
+      <div class="card" onclick="openLink('https://web.whatsapp.com')">
+        <div class="ic">
+          <!-- WhatsApp icon simplified -->
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+            <path d="M20 4.5A10 10 0 1 0 6.5 20L4 22l1.9-3.5A10 10 0 0 0 20 4.5z" stroke="#25D366" stroke-width="1.6" fill="rgba(37,211,102,0.06)"/>
+            <path d="M8.2 8.8c.6-.2 1.6-.2 2.5.25.9.5 1.6 1.4 2 2.3.4.9.4 1.6.1 1.9-.3.3-.8.5-1.4.3-.6-.2-1.1-.8-1.6-1.2-.4-.3-.8-.5-1.2-.3-.4.2-1 .9-1.1 1.2-.1.4.2 1 .9 1.6" stroke="#25D366" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="apptitle">WhatsApp</div>
+        <div class="aptsub">Messages</div>
+      </div>
+
+      <div class="card" onclick="openLink('https://www.google.com')">
+        <div class="ic">
+          <!-- Google 'G' simple -->
+          <svg width="48" height="48" viewBox="0 0 48 48">
+            <circle cx="24" cy="24" r="20" fill="black" opacity="0.04"/>
+            <path d="M24 15c2 0 3.6.7 4.8 1.9l3.6-3.6C30.2 11 27.3 10 24 10 15.7 10 9 16.7 9 25s6.7 15 15 15c8.3 0 15-6.7 15-15 0-1.2-.1-2.4-.4-3.5H24v3z" fill="url(#g)"/>
+          </svg>
+        </div>
+        <div class="apptitle">Google</div>
+        <div class="aptsub">Search</div>
+      </div>
+
+      <div class="card" onclick="openCamera()">
+        <div class="ic">
+          <!-- Camera icon -->
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+            <rect x="3" y="6" width="18" height="12" rx="2" stroke="#4be1ff" stroke-width="1.6" fill="rgba(75,225,255,0.02)"/>
+            <circle cx="12" cy="12" r="3" stroke="#4be1ff" stroke-width="1.6"/>
+            <path d="M7 6l1.5-2h7L17 6" stroke="#4be1ff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="apptitle">Camera</div>
+        <div class="aptsub">Open Camera</div>
+      </div>
+
+      <div class="card" onclick="openLink('https://mail.google.com')">
+        <div class="ic">
+          <!-- Gmail envelope -->
+          <svg width="48" height="48" viewBox="0 0 24 24">
+            <rect x="3" y="6" width="18" height="12" rx="2" fill="rgba(255,255,255,0.02)" stroke="#ff6b6b" stroke-width="1.2"/>
+            <path d="M3 6l9 7 9-7" stroke="#ff6b6b" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="apptitle">Gmail</div>
+        <div class="aptsub">Email</div>
+      </div>
+
+      <div class="card" onclick="openLink('https://drive.google.com')">
+        <div class="ic">
+          <!-- Files/Drive simplified -->
+          <svg width="48" height="48" viewBox="0 0 24 24">
+            <rect x="5" y="5" width="14" height="14" rx="2" fill="rgba(75,225,255,0.02)" stroke="#4be1ff" stroke-width="1.2"/>
+            <path d="M8 9h8M8 12h8M8 15h5" stroke="#4be1ff" stroke-width="1.2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="apptitle">Google Files</div>
+        <div class="aptsub">Drive</div>
+      </div>
+
+      <div class="card" onclick="openLink('https://www.youtube.com')">
+        <div class="ic">
+          <!-- YouTube play -->
+          <svg width="48" height="48" viewBox="0 0 24 24">
+            <rect x="3" y="6" width="18" height="12" rx="3" fill="#ff0000"/>
+            <path d="M10 9l5 3-5 3V9z" fill="#fff"/>
+          </svg>
+        </div>
+        <div class="apptitle">YouTube</div>
+        <div class="aptsub">Videos</div>
+      </div>
+
+      <div class="card" onclick="openLink('https://www.amazon.in')">
+        <div class="ic">
+          <!-- Amazon smile -->
+          <svg width="48" height="48" viewBox="0 0 24 24">
+            <path d="M3 6h18v12H3z" fill="rgba(255,255,255,0.02)" stroke="#ffd27a" stroke-width="1.2"/>
+            <path d="M7 15c2 1.2 6 1.2 10 0" stroke="#ffd27a" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="apptitle">Amazon</div>
+        <div class="aptsub">Shopping</div>
+      </div>
+
+      <div class="card" onclick="openLink('https://www.netflix.com')">
+        <div class="ic">
+          <!-- Netflix N -->
+          <svg width="48" height="48" viewBox="0 0 24 24">
+            <rect x="3" y="3" width="18" height="18" rx="2" fill="rgba(255,255,255,0.02)" stroke="#ff4b4b" stroke-width="1.2"/>
+            <text x="12" y="16" text-anchor="middle" font-size="20" font-weight="700" fill="#ff4b4b" font-family="Inter, sans-serif">N</text>
+          </svg>
+        </div>
+        <div class="apptitle">Netflix</div>
+        <div class="aptsub">Movies &amp; TV</div>
+      </div>
+
+      <!-- Company logo tile linking to home -->
+      <div class="card" onclick="openLink('#')">
+        <div class="ic">
+          <!-- Reuse the AI chip logo as company tile -->
+          <svg viewBox="0 0 100 100" width="48" height="48" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="g2" x1="0" x2="1">
+                <stop offset="0" stop-color="#00e0ff"/>
+                <stop offset="1" stop-color="#4be1ff"/>
+              </linearGradient>
+            </defs>
+            <rect x="8" y="8" rx="10" width="84" height="84" fill="rgba(255,255,255,0.01)" stroke="url(#g2)" stroke-width="1.6"/>
+            <rect x="22" y="22" width="56" height="56" rx="6" fill="none" stroke="url(#g2)" stroke-width="1.6"/>
+            <text x="50" y="58" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="18" fill="url(#g2)">BYTEX.AI</text>
+          </svg>
+        </div>
+        <div class="apptitle">ByteX.AI</div>
+        <div class="aptsub">By Bytecoder &amp; Intelligence</div>
+      </div>
+
+    </div>
+
+    <footer>Tip: Click an app icon to open it. Camera uses your device camera (permission required).</footer>
+  </div>
+
+  <!-- Camera modal -->
+  <div id="camModal" style="position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:linear-gradient(180deg, rgba(0,0,0,0.6), rgba(0,0,0,0.75));">
+    <div style="width:90%;max-width:760px;background:#021a2b;padding:12px;border-radius:12px;border:1px solid rgba(75,225,255,0.06);">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;color:var(--muted)">
+        <div>Camera</div>
+        <div><button onclick="closeCam()" class="btn small-btn">Close</button></div>
+      </div>
+      <video id="camVideo" autoplay playsinline style="width:100%;border-radius:8px;background:#000"></video>
+    </div>
+  </div>
+
+  <script>
+    // Date & Time updater
+    function updateDateTime(){
+      const d = new Date();
+      const optsDate = { year:'numeric',month:'short',day:'numeric'};
+      document.getElementById('date').innerText = d.toLocaleDateString(undefined, optsDate);
+      document.getElementById('time').innerText = d.toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    }
+    setInterval(updateDateTime,1000);
+    updateDateTime();
+
+    // Search behaviors: we open a Google search in a new tab, but prefix to indicate Gemini or ChatGPT
+    function runGeminiSearch(e){
+      e.preventDefault();
+      const q = document.getElementById('geminiQ').value.trim();
+      const full = q ? `Gemini ${q}` : 'Gemini AI';
+      const url = 'https://www.google.com/search?q=' + encodeURIComponent(full);
+      window.open(url,'_blank');
+      return false;
+    }
+    function runChatGPTSearch(e){
+      e.preventDefault();
+      const q = document.getElementById('chatgptQ').value.trim();
+      const full = q ? `ChatGPT ${q}` : 'ChatGPT AI';
+      const url = 'https://www.google.com/search?q=' + encodeURIComponent(full);
+      window.open(url,'_blank');
+      return false;
+    }
+
+    function openLink(url){
+      window.open(url,'_blank');
+    }
+
+    // Camera
+    let stream;
+    async function openCamera(){
+      const modal = document.getElementById('camModal');
+      const video = document.getElementById('camVideo');
+      try{
+        stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}, audio:false});
+        video.srcObject = stream;
+        modal.style.display='flex';
+      }catch(err){
+        alert('Camera access denied or not available: ' + err.message);
+      }
+    }
+    function closeCam(){
+      const modal = document.getElementById('camModal');
+      modal.style.display='none';
+      if(stream){
+        stream.getTracks().forEach(t=>t.stop());
+        stream = null;
+      }
+    }
+
+    // Small UX: allow Enter on inputs to trigger search (forms already handle that)
+  </script>
+</body>
+</html>
